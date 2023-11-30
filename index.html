@@ -12,102 +12,11 @@
     }
   </style>
 
-  <link rel="icon" type="image/png"
-    href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAGVSURBVGhD7ZS7ksIwDEWzfBP9tvvJtPT8EzvK2IwxkXz1csJMTpMUkXSujFm+nZ/yNPH793iW1+V+u7p6WVEPbaV79ggBDZSkWw4XABVvmR1ic5hFvDI7wKU8X3jk9+AtgEZ+r3+dnlcAzUU9ijyxBkDkjyZeWYWkAJw0V2MJudUL7fNxiVuyN07i3CKkpbawATLlJXEta4BediTPDUdCR4lX1FuWBKQAFnFkIaoAFnnPxpEA4iX2gsp7wsMBLNtH8NQSULFWHtkcWjcKODwBRKZl9D0Jebfe4roDvQgiX14/0C6qIgaQmrYy9J1H3oPpBHr58sqSJU+YjpSEEHECked6IbWmE5ghj+K6xBwkjshLoPXhATTi3u0T7DBtc+3Gpf6aXiEnECmvRRw8GqQVJ6J7qgU8ZCxkSgDkJ2ORJ9IDZMoTqQGi5ft+VJsWIFJe6pUSIEoe6TM9wEgckW4JD2CV14oTKXeAE9mSt0hXar+pJxBBv4ivCCD99A4dQBKvhAcgrCEQ4Z6UAIQmhEX85OSEWJZ/m8YM8NY9Qp4AAAAASUVORK5CYII=">
+  <link rel="icon" type="image/png" href="icon.png">
   <title>test</title>
 </head>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-<script>
-function setup() {
-  creditsHeight = creditsMultiplier * windowWidth * windowHeight / 1010000;
-
-  createCanvas(windowWidth, windowHeight);
-}
-
-function windowResized() {
-  creditsHeight = creditsMultiplier * windowWidth * windowHeight / 1010000;
-  resizeCanvas(windowWidth, windowHeight);
-}
-
-var ifCircle = false;
-
-var creditsMultiplier = 20;
-var creditsHeight = 20;
-
-function draw() {
-  background(220);
-
-  drawBorderRects();
-  drawMouseCircle();
-
-  writeCredits();
-}
-
-function mousePressed() {
-  ifCircle = !ifCircle;
-
-  if (mouseX > (width - 50)) {
-    creditsMultiplier++;
-    windowResized();
-  }
-  if (mouseX < 50) {
-    creditsMultiplier--;
-    windowResized();
-  }
-}
-
-function drawMouseCircle() {
-  push();
-
-  noStroke();
-  if (ifCircle) {
-    fill(0, 255, 0);
-    ellipse(mouseX, mouseY, 50);
-  }
-  else {
-    rectMode(CENTER);
-    fill(255, 0, 0);
-    rect(mouseX, mouseY, 50, 50);
-  }
-
-  pop();
-}
-
-function drawBorderRects() {
-  push();
-
-  fill(0, 0, 255);
-  stroke(255, 0, 0);
-  rect(0, 0, 50, 50);
-
-  fill(0, 255, 255);
-  rect(width - 50, 0, 50, 50);
-
-  fill(255, 0, 255);
-  rect(0, height - 50, 50, 50);
-
-  fill(0, 255, 0);
-  rect(width - 50, height - 50, 50, 50);
-
-  pop();
-}
-
-function writeCredits() {
-  push();
-
-  stroke(0);
-  textSize(creditsHeight);
-  textAlign(RIGHT, BOTTOM);
-
-  text("Creato da:\nLuca Lazzaroni - 3°CT", width - 10, height - 10);
-  //################
-  text(Math.trunc(millis()) + "\t" + creditsMultiplier + "\t" + width+"/"+height, width / 2, height / 2);
-  //################
-
-  pop();
-}
-
-</script>
+<script src="p5.js"></script>
+<script src="main.js"></script>
 
 </html>
