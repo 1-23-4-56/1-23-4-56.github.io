@@ -2,6 +2,8 @@ function setup() {
   creditsHeight = creditsMultiplier * windowWidth * windowHeight / 1010000;
 
   createCanvas(windowWidth, windowHeight);
+
+  numpred=mergeAndPredict(document.getElementById('testImage'));
 }
 
 function windowResized() {
@@ -13,6 +15,8 @@ var ifCircle = false;
 
 var creditsMultiplier = 20;
 var creditsHeight = 20;
+
+var numpred=-1;
 
 function draw() {
   background(220);
@@ -81,7 +85,7 @@ function writeCredits() {
 
   text("Creato da:\nLuca Lazzaroni - 3°CT", width - 10, height - 10);
   //################
-  text(Math.trunc(millis()) + "\t" + creditsMultiplier + "\t" + width + "/" + height, width / 2, height / 2);
+  text(Math.trunc(millis()) + "\t" + creditsMultiplier + "\t" + width + "/" + height+"previsione:"+numpred, width / 2, height / 2);
   //################
 
   pop();
