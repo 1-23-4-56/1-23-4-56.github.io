@@ -85,7 +85,7 @@ function writeCredits() {
 
   text("Creato da:\nLuca Lazzaroni - 3°CT", width - 10, height - 10);
   //################
-  text(Math.trunc(millis()) + "\t" + creditsMultiplier + "\t" + width + "/" + height+"previsione:"+numpred, width / 2, height / 2);
+  text(Math.trunc(millis()) + "\t" + creditsMultiplier + "\t" + width + "/" + height+"previsione:"+mergeAndPredict(document.getElementById('testImage')), width / 2, height / 2);
   //################
 
   pop();
