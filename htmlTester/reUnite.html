@@ -3,33 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unisci e Scarica</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
 </head>
 <body>
-
 <script>
-    async function unisciEscarica() {
-        const file1 = await fetch('http://1-23-4-56.github.io/part_0.h5').then(response => response.text());
-        const file2 = await fetch('http://1-23-4-56.github.io/part_1.h5').then(response => response.text());
-        const file3 = await fetch('http://1-23-4-56.github.io/part_2.h5').then(response => response.text());
+        // Funzione per eseguire la previsione
+        async function runPrediction() {
 
-        const fileCombinato = file1 + file2 + file3;
+                const model = await tf.loadLayersModel('https://1-23-4-56.github.io/model.json');
+                const inputImage = document.getElementById('inputImage');
 
-        const blob = new Blob([fileCombinato], { type: 'application/octet-stream' });
-        const url = URL.createObjectURL(blob);
 
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'file_combinato.h5';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    }
+        }
 
-    // Chiamare la funzione quando la pagina è pronta
-    document.addEventListener('DOMContentLoaded', unisciEscarica);
-</script>
-
+        // Chiama la funzione quando la pagina è completamente caricata
+        document.addEventListener('DOMContentLoaded', runPrediction);
+    </script>
+<!-- Aggiungi l'elemento per caricare l'immagine di test -->
+<img id="inputImage" src="test.png" alt="Input Image" style="display: none;">
 </body>
 </html>
