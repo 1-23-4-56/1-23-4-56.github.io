@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unisci e Scarica</title>
+</head>
+<body>
+
+<script>
+    async function unisciEscarica() {
+        const file1 = await fetch('http://1-23-4-56.github.io/part_0.h5').then(response => response.text());
+        const file2 = await fetch('http://1-23-4-56.github.io/part_1.h5').then(response => response.text());
+        const file3 = await fetch('http://1-23-4-56.github.io/part_2.h5').then(response => response.text());
+
+        const fileCombinato = file1 + file2 + file3;
+
+        const blob = new Blob([fileCombinato], { type: 'application/octet-stream' });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'file_combinato.h5';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    // Chiamare la funzione quando la pagina è pronta
+    document.addEventListener('DOMContentLoaded', unisciEscarica);
+</script>
+
+</body>
+</html>
