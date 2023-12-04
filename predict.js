@@ -1,70 +1,44 @@
-async function predict(imageElement) {
+async function runPrediction(model, inputImage) {
 
-    const model = await tf.loadLayersModel('model.h5');
+    //const inputImage = document.getElementById('testImage');
+    const image = tf.browser.fromPixels(inputImage, 1);
 
-    // Converte l'immagine in un tensore
-    const canvas = document.createElement('canvas');
-    canvas.width = 28;
-    canvas.height = 28;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(imageElement, 0, 0, 28, 28);
-    const imageData = ctx.getImageData(0, 0, 28, 28);
+    const resizedImage = tf.image.resizeBilinear(image, [28, 28]);
 
-    // Converte i dati dell'immagine in un tensore
-    const inputTensor = tf.browser.fromPixels(imageData, 1)
-        .toFloat()
-        .expandDims(0)
-        .expandDims(-1);
+    const normalizedImage = resizedImage.div(255);
+    const normalizedImageInv = invertColors(normalizedImage);
 
-    // Effettua la previsione
-    const prediction = model.predict(inputTensor);
+    const input = normalizedImageInv.expandDims();
 
-    // Ottieni l'indice della classe predetta
-    const predictedClass = prediction.argMax().dataSync()[0];
+    console.log('Dimensioni immagine:', input.shape);
+    console.log('immagine:', input.dataSync());
 
-    return predictedClass;
+    const predictedClass = model.predict(input).dataSync();
+
+    console.log('Predict good boy', predictedClass);
+
+    console.log('Valori normalizzati:', normalizedImage.arraySync());
+    console.log('Previste probabilità:', model.predict(input).arraySync());
+
+    const probClass01 = model.predict(input).arraySync()[0];
+    const [probClass0, probClass1, probClass2, probClass3, probClass4, probClass5, probClass6, probClass7, probClass8, probClass9] = probClass01;
+
+    return [highNum(probClass01), probClass0, probClass1, probClass2, probClass3, probClass4, probClass5, probClass6, probClass7, probClass8, probClass9];
 }
 
-async function mergeAndPredict(imageElement) {
-    const numParts = 3;  // Numero di parti del modello
-    const partSizeMb = 100;  // Dimensione massima di ogni parte in MB
+//#################################################
 
-    // Ricomponi le parti
-    const mergedModel = new Uint8Array(partSizeMb * 1024 * 1024 * numParts);
-    for (let i = 0; i < numParts; i++) {
-      const response = await fetch(`part_${i}.h5`);
-      const partData = new Uint8Array(await response.arrayBuffer());
-      mergedModel.set(partData, i * partSizeMb * 1024 * 1024);
-    }
+function highNum(nums) {
+    var ris = 0;
 
-    // Crea un Blob con i dati del modello
-    const blob = new Blob([mergedModel], { type: 'application/octet-stream' });
+    ris = Math.max(...nums);
+    ris = nums.indexOf(ris);
 
-    // Crea un URL oggetto per il Blob
-    const blobUrl = URL.createObjectURL(blob);
+    return ris;
+}
 
-    // Carica il modello TensorFlow.js
-    const model = await tf.loadLayersModel(tf.io.browserHTTPRequest(blobUrl));
-
-    // Converte l'immagine in un tensore
-    const canvas = document.createElement('canvas');
-    canvas.width = 28;
-    canvas.height = 28;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(imageElement, 0, 0, 28, 28);
-    const imageData = ctx.getImageData(0, 0, 28, 28);
-
-    // Converte i dati dell'immagine in un tensore
-    const inputTensor = tf.browser.fromPixels(imageData, 1)
-        .toFloat()
-        .expandDims(0)
-        .expandDims(-1);
-
-    // Effettua la previsione
-    const prediction = model.predict(inputTensor);
-
-    // Ottieni l'indice della classe predetta
-    const predictedClass = prediction.argMax().dataSync()[0];
-
-    return predictedClass;
-  }
+function invertColors(image) {
+    return tf.tidy(() => {
+        return tf.sub(tf.scalar(1), image);
+    });
+}

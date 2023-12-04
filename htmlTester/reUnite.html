@@ -21,7 +21,7 @@ function highNum(nums) {
         // Funzione per eseguire la previsione e visualizzare l'immagine
 async function runPrediction() {
     // Carica il modello TensorFlow.js
-    const model = await tf.loadLayersModel('https://1-23-4-56.github.io/assets/model.json');
+    const model = await tf.loadLayersModel('https://1-23-4-56.github.io/modelJS/model.json');
 
     // Carica l'immagine di test (assicurati che l'elemento con id "inputImage" esista)
     const inputImage = document.getElementById('inputImage');
