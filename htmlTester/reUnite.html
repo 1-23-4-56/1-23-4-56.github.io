@@ -6,15 +6,74 @@
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
 </head>
 <body>
+<canvas id="outputCanvas" width="28" height="28" style="border:1px solid;"></canvas>
+
 <script>
-        // Funzione per eseguire la previsione
-        async function runPrediction() {
 
-                const model = await tf.loadLayersModel('https://1-23-4-56.github.io/model.json');
-                const inputImage = document.getElementById('inputImage');
+function highNum(nums) {
+    var ris = 0;
+
+    ris = Math.max(...nums);
+    ris = nums.indexOf(ris);
+
+    return ris;
+}
+        // Funzione per eseguire la previsione e visualizzare l'immagine
+async function runPrediction() {
+    // Carica il modello TensorFlow.js
+    const model = await tf.loadLayersModel('https://1-23-4-56.github.io/assets/model.json');
+
+    // Carica l'immagine di test (assicurati che l'elemento con id "inputImage" esista)
+    const inputImage = document.getElementById('inputImage');
+    const image = tf.browser.fromPixels(inputImage, 1); // Usa 1 per l'immagine in scala di grigi
+
+    // Ridimensiona l'immagine a 28x28
+    const resizedImage = tf.image.resizeBilinear(image, [28, 28]);
+
+    // Normalizza i valori dell'immagine tra 0 e 1
+    const normalizedImage = resizedImage.div(255);
+
+    // Aggiungi dimensioni necessarie per l'input del modello
+    const input = normalizedImage.reshape([1, 28, 28, 1]);
+
+    // Effettua la previsione
+    const predictedClass = await predictNumber(model, input);
+
+    // Visualizza il risultato nella console del browser
+    console.log('Valori normalizzati:', normalizedImage.arraySync());
+console.log('Previste probabilità:', model.predict(input).arraySync());
+
+const [probClass01, p1,p2,p3,p4,p5,p6,p7,p8,p9] = model.predict(input).arraySync();
+const [probClass0, probClass1, probClass2, probClass3, probClass4, probClass5, probClass6, probClass7, probClass8, probClass9] = probClass01;
 
 
-        }
+
+console.log('Probabilità per la classe 0:', probClass0);
+console.log('Probabilità per la classe 1:', probClass1);
+console.log('Probabilità per la classe 2:', probClass2);
+console.log('Probabilità per la classe 3:', probClass3);
+console.log('Probabilità per la classe 4:', probClass4);
+console.log('Probabilità per la classe 5:', probClass5);
+console.log('Probabilità per la classe 6:', probClass6);
+console.log('Probabilità per la classe 7:', probClass7);
+console.log('Probabilità per la classe 8:', probClass8);
+console.log('Probabilità per la classe 9:', probClass9);
+
+console.log('Risultato:', predictedClass);
+
+    console.log('Risultato:', highNum(probClass01));
+}
+
+// Funzione per prevedere il numero
+async function predictNumber(model, img) {
+    return await tf.tidy(() => {
+        const output = model.predict(img);
+        const predictions = Array.from(output.dataSync());
+        return predictions.reduce(function(prev, cur, index) {
+            return cur > prev ? index : prev;
+        }, 0);
+    });
+}
 
         // Chiama la funzione quando la pagina è completamente caricata
         document.addEventListener('DOMContentLoaded', runPrediction);
