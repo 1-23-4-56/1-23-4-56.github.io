@@ -10,15 +10,7 @@ async function runPrediction(model, inputImage) {
 
     const input = normalizedImageInv.expandDims();
 
-    console.log('Dimensioni immagine:', input.shape);
-    console.log('immagine:', input.dataSync());
-
     const predictedClass = model.predict(input).dataSync();
-
-    console.log('Predict good boy', predictedClass);
-
-    console.log('Valori normalizzati:', normalizedImage.arraySync());
-    console.log('Previste probabilità:', model.predict(input).arraySync());
 
     const probClass01 = model.predict(input).arraySync()[0];
     const [probClass0, probClass1, probClass2, probClass3, probClass4, probClass5, probClass6, probClass7, probClass8, probClass9] = probClass01;
