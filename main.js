@@ -1,3 +1,60 @@
+let writinRCT;
+let mousePath = [];
+
+class WritingRect {
+  constructor(x, y, sideLength) {
+    this.x = x;
+    this.y = y;
+    this.sideLength = sideLength;
+    this.content = createGraphics(sideLength, sideLength);
+    this.content.background(255);
+    this.strokeColor = color(0);
+    this.strokeWeightVal = 2;
+  }
+
+  setColor(c) {
+    this.strokeColor = c;
+  }
+
+  setLineWidth(w) {
+    this.strokeWeightVal = w;
+  }
+
+  display() {
+    rectMode(CENTER);
+    rect(this.x, this.y, this.sideLength, this.sideLength);
+    image(this.content, this.x - this.sideLength / 2, this.y - this.sideLength / 2);
+  }
+
+  writeOnMouseDrag() {
+    if (
+      mouseX > this.x - this.sideLength / 2 &&
+      mouseX < this.x + this.sideLength / 2 &&
+      mouseY > this.y - this.sideLength / 2 &&
+      mouseY < this.y + this.sideLength / 2
+    ) {
+      this.content.stroke(this.strokeColor);
+      this.content.strokeWeight(this.strokeWeightVal);
+      for (let i = 0; i < mousePath.length - 1; i++) {
+        let currentPos = mousePath[i];
+        let nextPos = mousePath[i + 1];
+        this.content.line(
+          currentPos.x - (this.x - this.sideLength / 2),
+          currentPos.y - (this.y - this.sideLength / 2),
+          nextPos.x - (this.x - this.sideLength / 2),
+          nextPos.y - (this.y - this.sideLength / 2)
+        );
+      }
+    }
+  }
+
+  getImg() {
+    return this.content.get();
+  }
+}
+
+//###########################################################
+
 let model;
 
 let loadingImage;
@@ -14,6 +71,10 @@ async function setup() {
   loadTheModel();
 
   createCanvas(windowWidth, windowHeight);
+
+  writinRCT = new WritingRect(width / 2, height / 2, 300);
+  writinRCT.setColor(color(0));
+  writinRCT.setLineWidth(10);
 }
 
 
@@ -74,6 +135,7 @@ function drawBG() {
 
   let textInRect = "io sono PEPPER e distruggerò\nil mondo";
 
+  push();
   fill(45);
   stroke(borderColor);
   strokeWeight(5);
@@ -88,6 +150,7 @@ function drawBG() {
   textAlign(CENTER, CENTER);
   textSize(18);
   text(textInRect, smallRectX + smallRectWidth / 2, smallRectY + smallRectHeight / 2);
+  pop();
 }
 
 //######################################
@@ -99,6 +162,7 @@ function whenLoading() {
   imageMode(CENTER);
   textAlign(CENTER);
 
+  strokeColor(255);
   text("Caricamento...\nL'operazione potrebbe richiedere un minuto.", width / 2, height / 2 + (293 / 2));
 
   push();
@@ -114,11 +178,17 @@ function whenLoadedLoop() {
   drawBG();
 
   text("caricato", 100, 100);
+
+  push();
+  writinRCT.display();
+  pop();
 }
 
-async function mousePressed() {
-  const inputImage = document.getElementById('testImage');
-  const [result, probClass0, probClass1, probClass2, probClass3, probClass4, probClass5, probClass6, probClass7, probClass8, probClass9] = await runPrediction(model, inputImage);
+function mousePressed() {
+  mousePath = [];
+}
 
-  console.log('thisguyshouldbeathreee', result)
+function mouseDragged() {
+  writinRCT.writeOnMouseDrag();
+  mousePath.push(createVector(mouseX, mouseY));
 }
