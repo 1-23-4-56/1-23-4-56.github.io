@@ -1,6 +1,5 @@
 async function runPrediction(model, inputImage) {
 
-    //const inputImage = document.getElementById('testImage');
     const image = tf.browser.fromPixels(inputImage, 1);
 
     const resizedImage = tf.image.resizeBilinear(image, [28, 28]);
@@ -9,8 +8,6 @@ async function runPrediction(model, inputImage) {
     const normalizedImageInv = invertColors(normalizedImage);
 
     const input = normalizedImageInv.expandDims();
-
-    const predictedClass = model.predict(input).dataSync();
 
     const probClass01 = model.predict(input).arraySync()[0];
     const [probClass0, probClass1, probClass2, probClass3, probClass4, probClass5, probClass6, probClass7, probClass8, probClass9] = probClass01;
