@@ -162,7 +162,9 @@ function whenLoading() {
   imageMode(CENTER);
   textAlign(CENTER);
 
-  strokeColor(255);
+  noStroke();
+  fill(255);
+  textSize(20);
   text("Caricamento...\nL'operazione potrebbe richiedere un minuto.", width / 2, height / 2 + (293 / 2));
 
   push();
