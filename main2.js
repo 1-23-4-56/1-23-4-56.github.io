@@ -328,17 +328,15 @@ function whenLoadedLoop() {
 
   pop();
 
-}
-
-function mousePressed() {
-  mousePath = [];
-}
-
-function mouseReleased() {
   if (canPredict) {
     canPredict = false;
     predict();
   }
+
+}
+
+function mousePressed() {
+  mousePath = [];
 }
 
 function mouseDragged() {

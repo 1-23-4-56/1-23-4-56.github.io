@@ -12,6 +12,12 @@ async function runPrediction(model, inputImage) {
     const probClass01 = model.predict(input).arraySync()[0];
     const [probClass0, probClass1, probClass2, probClass3, probClass4, probClass5, probClass6, probClass7, probClass8, probClass9] = probClass01;
 
+    tf.dispose(image);
+    tf.dispose(resizedImage);
+    tf.dispose(normalizedImage);
+    tf.dispose(normalizedImageInv);
+    tf.dispose(input);
+
     return [highNum(probClass01), probClass0, probClass1, probClass2, probClass3, probClass4, probClass5, probClass6, probClass7, probClass8, probClass9];
 }
 
