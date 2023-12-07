@@ -216,12 +216,12 @@ function drawBG() {
   let borderRadius = 15;
   let borderColor = color(8, 130, 2);
 
-  let smallRectWidth = 400;
+  let smallRectWidth = 350;
   let smallRectHeight = 100;
   let smallRectX = width - smallRectWidth - borderRadius;
   let smallRectY = height - smallRectHeight - borderRadius;
 
-  let textInRect = "Creato da:\nLuca Lazzaroni\nIn collaborazione con Michele Stefini";
+  let textInRect = "Creato da:\nLuca Lazzaroni\nin collaborazione con Michele Stefini";
 
   push();
   fill(45);
