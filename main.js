@@ -8,7 +8,7 @@ class WritingRect {
     this.sideLength = sideLength;
     this.content = createGraphics(sideLength, sideLength);
     this.content.background(255);
-    this.strokeColor = color(0);
+    this.strokeColor = 0;
     this.strokeWeightVal = 2;
   }
 
@@ -59,6 +59,13 @@ class WritingRect {
 
   getImg() {
     return this.content.get();
+  }
+
+  mouseOnThere() {
+    return mouseX > this.x - this.sideLength / 2 &&
+      mouseX < this.x + this.sideLength / 2 &&
+      mouseY > this.y - this.sideLength / 2 &&
+      mouseY < this.y + this.sideLength / 2;
   }
 }
 
@@ -113,6 +120,55 @@ class percentRect {
   }
 }
 
+let buttons = [];
+
+class Button {
+  constructor(x, y, width, height, label, clickFunction, type) {
+    this.x = x - (width / 2);
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.label = label;
+    this.clickFunction = clickFunction;
+    this.isClicked = false;
+    this.type = type;
+  }
+
+  display() {
+    if (!mouseIsPressed) this.isClicked = false;
+    let bgColor = this.isClicked ? color(75) : color(45);
+
+    if (this.type == 0) {
+      if (writinRCT.strokeColor == 0) bgColor = color(75);
+      else bgColor = color(45);
+    } else if (this.type == 1) {
+      if (writinRCT.strokeColor == 255) bgColor = color(75);
+      else bgColor = color(45);
+    }
+
+    stroke(8, 130, 2);
+    strokeWeight(2);
+    fill(bgColor);
+    rect(this.x, this.y, this.width, this.height, 2);
+
+    image(this.label, this.x + this.width / 2, this.y + this.height / 2, this.width, this.height);
+  }
+
+  isMouseOver() {
+    return mouseX > this.x && mouseX < this.x + this.width &&
+      mouseY > this.y && mouseY < this.y + this.height;
+  }
+
+  handleMouseClick() {
+    if (this.isMouseOver()) {
+      this.isClicked = true;
+      if (this.clickFunction) {
+        this.clickFunction();
+      }
+    }
+  }
+}
+
 //###########################################################
 
 let model;
@@ -133,7 +189,7 @@ async function setup() {
   createCanvas(windowWidth, windowHeight);
 
   writinRCT = new WritingRect(width / 4, height / 2, 400);
-  writinRCT.setColor(color(0));
+  writinRCT.setColor(0);
   writinRCT.setLineWidth(25);
 
   var centerX = (((3 * width / 4 + 202.5) - 2 * width / 4) / 2) + width / 2;
@@ -147,8 +203,25 @@ async function setup() {
   for (var i = 0; i < 10; i++) {
     percRects[i] = new percentRect(rectX, (initialHeight + i * interval) + interval / 2, 75, 25);
   }
+
+  buttons[0] = new Button((width / 4) - 35 - 20, ((height / 2) - 235) - 20, 35, 35, loadImage("write.png"), writeBlack, 0);
+  buttons[1] = new Button(width / 4, ((height / 2) - 235) - 20, 35, 35, loadImage("cancel.png"), writeWhite, 1);
+  buttons[2] = new Button((width / 4) + 35 + 20, ((height / 2) - 235) - 20, 35, 35, loadImage("reload.png"), reloadRect, 2);
 }
 
+function reloadRect() {
+  writinRCT.content.background(255);
+}
+
+function writeBlack() {
+  writinRCT.setColor(0);
+  writinRCT.setLineWidth(25);
+}
+
+function writeWhite() {
+  writinRCT.setColor(255);
+  writinRCT.setLineWidth(40);
+}
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
@@ -168,6 +241,14 @@ function windowResized() {
     percRects[i].x = rectX;
     percRects[i].y = (initialHeight + i * interval) + interval / 2;
   }
+
+  buttons[0].x = ((width / 4) - 35 - 20) - buttons[0].width / 2;
+  buttons[0].y = ((height / 2) - 235) - 20;
+  buttons[1].x = (width / 4) - buttons[1].width / 2;
+  buttons[1].y = ((height / 2) - 235) - 20;
+  buttons[2].x = ((width / 4) + 35 + 20) - buttons[2].width / 2;
+  buttons[2].y = ((height / 2) - 235) - 20;
+
 }
 
 async function draw() {
@@ -289,7 +370,6 @@ function twoText(text1, text2, x, y, height1, height2) {
   text(text2, blockX + (blockWidth - text2Width) / 2, y2);
 }
 
-
 var num = 0;
 
 function whenLoadedLoop() {
@@ -307,24 +387,69 @@ function whenLoadedLoop() {
   fill(60);
   rect((((3 * width / 4 + 202.5) - 2 * width / 4) / 2) + width / 2, height / 2, (3 * width / 4 + 202.5) - 2 * width / 4, 405, borderRadius);
 
-  for (var i = 0; i < 10; i++) {
-    percRects[i].display(i);
+  if (mouseIsPressed && writinRCT.mouseOnThere()) {
+    var centerX = (((3 * width / 4 + 202.5) - 2 * width / 4) / 2) + width / 2;
+
+    push();
+    textAlign(CENTER);
+    textSize(28);
+    noStroke();
+    fill(255);
+    text("Scrivendo...", centerX, height / 2);
+    pop();
+  } else {
+    if (isWritinWhite()) {
+      var centerX = (((3 * width / 4 + 202.5) - 2 * width / 4) / 2) + width / 2;
+
+      push();
+      textAlign(CENTER);
+      textSize(28);
+      noStroke();
+      fill(255);
+      text("Nessuna scritta", centerX, height / 2);
+      pop();
+    }
+    else {
+      for (var i = 0; i < 10; i++) {
+        percRects[i].display(i);
+      }
+
+      textAlign(CENTER);
+      noStroke();
+      fill(255);
+      textSize(25);
+
+      var centerX = (((3 * width / 4 + 202.5) - 2 * width / 4) / 2) + width / 2;
+      var widthOfRect = (3 * width / 4 + 202.5) - 2 * width / 4;
+      var textEnd = (centerX - (widthOfRect / 2) + 250);
+      var newTextCenter = (((centerX + (widthOfRect / 2)) - textEnd) / 2) + textEnd;
+
+      push();
+      textAlign(LEFT);
+      twoText("Risultato:", num, newTextCenter, height / 2, 25, 45);
+      pop();
+    }
   }
 
-  textAlign(CENTER);
-  noStroke();
+  rectMode(CORNER);
+  imageMode(CENTER);
+  for (let button of buttons) {
+    button.display();
+  }
+
+  fill(60);
+  stroke(borderColor);
+  strokeWeight(5);
+  rect(15, 15, width - 2 * 15, 100, 15);
+
+  let centerX_ = 15 + (width - 2 * 15) / 2;
+  let centerY_ = 65;
+
   fill(255);
-  textSize(25);
-
-  var centerX = (((3 * width / 4 + 202.5) - 2 * width / 4) / 2) + width / 2;
-  var widthOfRect = (3 * width / 4 + 202.5) - 2 * width / 4;
-  var textEnd = (centerX - (widthOfRect / 2) + 250);
-  var newTextCenter = (((centerX + (widthOfRect / 2)) - textEnd) / 2) + textEnd;
-
-  push();
-  textAlign(LEFT);
-  twoText("Numero scritto:", num, newTextCenter, height / 2, 25, 45);
-  pop();
+  noStroke();
+  textAlign(CENTER, CENTER);
+  textSize(18);
+  text("Scrivere una cifra da 0 a 9 nel riquadro bianco.\n\nEssendo l'intelligenza artificiale allenata solo a riconoscere cifre da 0 a 9 grandi circa quanto il riquadro,\nse si scrive in modo diverso il risultato non sarà corretto.", centerX_, centerY_);
 
   pop();
 
@@ -332,6 +457,12 @@ function whenLoadedLoop() {
 
 function mousePressed() {
   mousePath = [];
+
+  for (let button of buttons) {
+    button.handleMouseClick();
+  }
+
+  checkForWhite = true;
 }
 
 function mouseReleased() {
@@ -339,6 +470,8 @@ function mouseReleased() {
     canPredict = false;
     predict();
   }
+
+  checkForWhite = true;
 }
 
 function mouseDragged() {
@@ -370,4 +503,20 @@ async function predict() {
 
   canPredict = true;
 
+}
+
+var checkForWhite = true;
+var oldWhiteValue = true;
+
+function isWritinWhite() {
+  if (checkForWhite) {
+    const pg = writinRCT.content;
+    pg.loadPixels();
+
+    oldWhiteValue = pg.pixels.every(value => value === 255);
+
+    checkForWhite = false;
+  }
+
+  return oldWhiteValue;
 }
