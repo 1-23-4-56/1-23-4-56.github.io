@@ -440,16 +440,16 @@ function whenLoadedLoop() {
   fill(60);
   stroke(borderColor);
   strokeWeight(5);
-  rect(15, 15, width - 2 * 15, 100, 15);
+  rect(15, 15, width - 2 * 15, 80, 15);
 
   let centerX_ = 15 + (width - 2 * 15) / 2;
-  let centerY_ = 65;
+  let centerY_ = 55;
 
   fill(255);
   noStroke();
   textAlign(CENTER, CENTER);
-  textSize(18);
-  text("Scrivere una cifra da 0 a 9 nel riquadro bianco.\n\nEssendo l'intelligenza artificiale allenata solo a riconoscere cifre da 0 a 9 grandi circa quanto il riquadro,\nse si scrive in modo diverso il risultato non sarà corretto.", centerX_, centerY_);
+  textSize(15);
+  text("Scrivere una cifra da 0 a 9 nel riquadro bianco.\nEssendo l'intelligenza artificiale allenata solo a riconoscere cifre da 0 a 9 grandi circa quanto il riquadro,\nse si scrive in modo diverso il risultato non sarà corretto.", centerX_, centerY_);
 
   pop();
 
