@@ -334,7 +334,7 @@ function whenLoading() {
   noStroke();
   fill(255);
   textSize(20);
-  text("Caricamento...\nL'operazione potrebbe richiedere un minuto.", width / 2, height / 2 + (293 / 2));
+  text("Caricamento...\nL'operazione potrebbe richiedere qualche minuto.", width / 2, height / 2 + (293 / 2));
 
   push();
   translate(width / 2, height / 2);
@@ -485,7 +485,9 @@ function mouseDragged() {
 var canPredict = true;
 
 async function predict() {
-  const inputImage = writinRCT.getImg().canvas;
+  findLimitsOnImage(writinRCT.getImg());
+
+  const inputImage = findLimitsOnImage(writinRCT.getImg()).canvas;
   const [result, probClass0, probClass1, probClass2, probClass3, probClass4, probClass5, probClass6, probClass7, probClass8, probClass9] = await runPrediction(model, inputImage);
 
   percRects[0].setPercentage(probClass0 * 100);
@@ -519,4 +521,87 @@ function isWritinWhite() {
   }
 
   return oldWhiteValue;
+}
+
+function findLimitsOnImage(imageToCheck_) {
+
+  let scale = 0.25;
+  const scaledImage = createImage(imageToCheck_.width * scale, imageToCheck_.height * scale);
+
+  scaledImage.copy(imageToCheck_, 0, 0, imageToCheck_.width, imageToCheck_.height, 0, 0, scaledImage.width, scaledImage.height);
+
+  let leftmostX = scaledImage.width / scale;
+  let rightmostX = 0;
+  let highestY = scaledImage.height / scale;
+  let lowestY = 0;
+
+  for (let y = 0; y < scaledImage.height; y++) {
+    for (let x = 0; x < scaledImage.width; x++) {
+      let pixelColor = scaledImage.get(x, y);
+
+      if (pixelColor[0] === 0 && pixelColor[1] === 0 && pixelColor[2] === 0) {
+        let originalX = Math.floor(x / scale);
+        let originalY = Math.floor(y / scale);
+
+        leftmostX = Math.min(leftmostX, originalX);
+        rightmostX = Math.max(rightmostX, originalX);
+        highestY = Math.min(highestY, originalY);
+        lowestY = Math.max(lowestY, originalY);
+      }
+    }
+  }
+
+  let newImageX = leftmostX;
+  let newImageY = highestY;
+  let newImageWidth = rightmostX - leftmostX;
+  let newImageHeight = lowestY - highestY;
+
+  let newCenterX = newImageX + (newImageWidth / 2);
+  let newCenterY = newImageY + (newImageHeight / 2);
+
+  let maxDimension = Math.max(newImageHeight, newImageWidth);
+
+  let border = maxDimension / 4;
+
+  newImageX = leftmostX - border;
+  newImageY = highestY - border;
+  newImageWidth = (rightmostX - leftmostX) + (border * 2);
+  newImageHeight = lowestY - highestY + (border * 2);
+
+  newCenterX = newImageX + (newImageWidth / 2);
+  newCenterY = newImageY + (newImageHeight / 2);
+
+  maxDimension = Math.max(newImageHeight, newImageWidth);
+
+  let cutImage = createImage(maxDimension, maxDimension);
+
+  let resultImage;
+
+  if (newImageWidth > newImageHeight) {
+    let calculatedY = newCenterY - (cutImage.height / 2);
+
+    let tempGraphics = createGraphics(newImageWidth, cutImage.height);
+    tempGraphics.background(255);
+
+    tempGraphics.copy(imageToCheck_, newImageX, calculatedY, newImageWidth, cutImage.height, 0, 0, newImageWidth, cutImage.height);
+
+    image(tempGraphics, newImageX, calculatedY);
+
+    resultImage = tempGraphics.get();
+  } else {
+    let calculatedX = newCenterX - (cutImage.width / 2);
+
+    let tempGraphics = createGraphics(cutImage.width, newImageHeight);
+    tempGraphics.background(255);
+
+    tempGraphics.copy(imageToCheck_, calculatedX, newImageY, cutImage.width, newImageHeight, 0, 0, cutImage.width, newImageHeight);
+
+    image(tempGraphics, calculatedX, newImageY);
+
+    resultImage = tempGraphics.get();
+  }
+
+  cutImage = resultImage;
+
+  return cutImage;
 }
