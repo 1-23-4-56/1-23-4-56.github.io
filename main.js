@@ -113,8 +113,8 @@ class percentRect {
     noStroke();
     fill(255);
     textSize(25);
-    text(number, this.x - (this.width / 2 + 35), this.y + 8);
-    text(this.percentage + "%", this.x + (this.width / 2 + 60), this.y + 8);
+    //text(number, this.x - (this.width / 2 + 35), this.y + 8);
+    text(number, this.x + (this.width / 2 + 20), this.y + 8);
 
     pop();
   }
@@ -124,7 +124,7 @@ let buttons = [];
 
 class Button {
   constructor(x, y, width, height, label, clickFunction, type) {
-    this.x = x - (width / 2);
+    this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
@@ -180,6 +180,8 @@ var loaded = false;
 var isModelLoaded = false;
 var isTestingTheModel = false;
 
+let WRtcDimensionP = 0.8;
+
 async function setup() {
   loadingImage = await loadImage("load.png");
   loadImgHeight = loadingImage.height;
@@ -188,32 +190,34 @@ async function setup() {
 
   createCanvas(windowWidth, windowHeight);
 
-  writinRCT = new WritingRect(width / 4, height / 2, 400);
+  let WRtcDimension = 400 * WRtcDimensionP;
+
+  writinRCT = new WritingRect(width / 4, height / 2, WRtcDimension);
   writinRCT.setColor(0);
   writinRCT.setLineWidth(25);
 
-  var centerX = (((3 * width / 4 + 202.5) - 2 * width / 4) / 2) + width / 2;
-  var widthOfRect = (3 * width / 4 + 202.5) - 2 * width / 4;
-  var rectX = (centerX - (widthOfRect / 2)) + 125;
+  var centerX = (((3 * width / 4 + ((WRtcDimension / 2) + 2.5)) - 2 * width / 4) / 2) + width / 2;
+  var widthOfRect = ((3 * width / 4 + ((WRtcDimension / 2) + 2.5)) - 2 * width / 4) * WRtcDimensionP;
+  var rectX = ((centerX - (widthOfRect / 2)) + 75);
 
   var restriciton = 30;
-  var initialHeight = (height / 2) - ((405 - restriciton) / 2);
-  var interval = ((405 - restriciton)) / 10;
+  var initialHeight = ((height / 2) - ((405 - restriciton) / 2));
+  var interval = (((405 - restriciton)) / 10);
 
   for (var i = 0; i < 10; i++) {
     percRects[i] = new percentRect(rectX, (initialHeight + i * interval) + interval / 2, 75, 25);
   }
 
-  buttons[0] = new Button((width / 4) - 35 - 20, ((height / 2) - 235) - 20, 35, 35, loadImage("write.png"), writeBlack, 0);
-  buttons[1] = new Button(width / 4, ((height / 2) - 235) - 20, 35, 35, loadImage("cancel.png"), writeWhite, 1);
-  buttons[2] = new Button((width / 4) + 35 + 20, ((height / 2) - 235) - 20, 35, 35, loadImage("reload.png"), reloadRect, 2);
+  //buttons[0] = new Button((width / 4) - 35 - 20, ((height / 2) - 235) - 20, 35, 35, loadImage("write.png"), writeBlack, 0);
+  //buttons[1] = new Button(width / 4, ((height / 2) - 235) - 20, 35, 35, loadImage("cancel.png"), writeWhite, 1);
+  buttons[0] = new Button(width / 4 - (WRtcDimension / 2), height / 2 + WRtcDimension / 2 + 20, 35, 35, loadImage("reload.png"), reloadRect, 2);
 }
 
 function reloadRect() {
   writinRCT.content.background(255);
 }
 
-function writeBlack() {
+/*function writeBlack() {
   writinRCT.setColor(0);
   writinRCT.setLineWidth(25);
 }
@@ -221,17 +225,19 @@ function writeBlack() {
 function writeWhite() {
   writinRCT.setColor(255);
   writinRCT.setLineWidth(40);
-}
+}*/
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
 
+  let WRtcDimension = 400 * WRtcDimensionP;
+
   writinRCT.x = width / 4;
   writinRCT.y = height / 2;
 
-  var centerX = (((3 * width / 4 + 202.5) - 2 * width / 4) / 2) + width / 2;
-  var widthOfRect = (3 * width / 4 + 202.5) - 2 * width / 4;
-  var rectX = (centerX - (widthOfRect / 2)) + 125;
+  var centerX = (((3 * width / 4 + ((WRtcDimension / 2) + 2.5)) - 2 * width / 4) / 2) + width / 2;
+  var widthOfRect = (3 * width / 4 + ((WRtcDimension / 2) + 2.5)) - 2 * width / 4;
+  var rectX = (centerX - (widthOfRect / 2)) + 120;
 
   var restriciton = 30;
   var initialHeight = (height / 2) - ((405 - restriciton) / 2);
@@ -242,12 +248,8 @@ function windowResized() {
     percRects[i].y = (initialHeight + i * interval) + interval / 2;
   }
 
-  buttons[0].x = ((width / 4) - 35 - 20) - buttons[0].width / 2;
-  buttons[0].y = ((height / 2) - 235) - 20;
-  buttons[1].x = (width / 4) - buttons[1].width / 2;
-  buttons[1].y = ((height / 2) - 235) - 20;
-  buttons[2].x = ((width / 4) + 35 + 20) - buttons[2].width / 2;
-  buttons[2].y = ((height / 2) - 235) - 20;
+  buttons[0].x = width / 4 - (WRtcDimension / 2);
+  buttons[0].y = height / 2 + WRtcDimension / 2 + 20;
 
 }
 
@@ -385,7 +387,7 @@ function whenLoadedLoop() {
   stroke(borderColor);
   strokeWeight(5);
   fill(60);
-  rect((((3 * width / 4 + 202.5) - 2 * width / 4) / 2) + width / 2, height / 2, (3 * width / 4 + 202.5) - 2 * width / 4, 405, borderRadius);
+  rect((((3 * width / 4 + 202.5) - 2 * width / 4) / 2) + width / 2, height / 2, ((3 * width / 4 + (((400 * WRtcDimensionP) / 2) + 2.5) - 2 * width / 4)) * WRtcDimensionP, 405, borderRadius);
 
   if (mouseIsPressed && writinRCT.mouseOnThere()) {
     var centerX = (((3 * width / 4 + 202.5) - 2 * width / 4) / 2) + width / 2;
@@ -421,7 +423,7 @@ function whenLoadedLoop() {
 
       var centerX = (((3 * width / 4 + 202.5) - 2 * width / 4) / 2) + width / 2;
       var widthOfRect = (3 * width / 4 + 202.5) - 2 * width / 4;
-      var textEnd = (centerX - (widthOfRect / 2) + 250);
+      var textEnd = (centerX - (widthOfRect / 2) + 135);
       var newTextCenter = (((centerX + (widthOfRect / 2)) - textEnd) / 2) + textEnd;
 
       push();
@@ -440,16 +442,16 @@ function whenLoadedLoop() {
   fill(60);
   stroke(borderColor);
   strokeWeight(5);
-  rect(15, 15, width - 2 * 15, 80, 15);
+  rect(15, 15, width - 2 * 15, 60, 15);
 
   let centerX_ = 15 + (width - 2 * 15) / 2;
-  let centerY_ = 55;
+  let centerY_ = 45;
 
   fill(255);
   noStroke();
   textAlign(CENTER, CENTER);
-  textSize(15);
-  text("Scrivere una cifra da 0 a 9 nel riquadro bianco.\nEssendo l'intelligenza artificiale allenata solo a riconoscere cifre da 0 a 9 grandi circa quanto il riquadro,\nse si scrive in modo diverso il risultato non sarà corretto.", centerX_, centerY_);
+  textSize(25);
+  text("Scrivere una cifra da 0 a 9 nel riquadro bianco.", centerX_, centerY_);
 
   pop();
 
